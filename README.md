@@ -1,7 +1,7 @@
 # U1-anomaly-free-sets
 
-![Python package](https://github.com/restrepo/DevOps/workflows/Python%20package/badge.svg)
-![Upload Python Package](https://github.com/restrepo/DevOps/workflows/Upload%20Python%20Package/badge.svg)
+![Python package](https://github.com/nicolerivera1/U1-anomaly-free-sets/workflows/Python%20package/badge.svg)
+![Upload Python Package](https://github.com/nicolerivera1/U1-anomaly-free-sets/workflows/Upload%20Python%20Package/badge.svg)
 ![GitHub contributors](https://img.shields.io/github/contributors/nicolerivera1/U1-anomaly-free-sets?style=plastic)
 
 **by: Nicole Rivera**
