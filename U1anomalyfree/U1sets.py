@@ -119,16 +119,30 @@ def joint(n0):
                 break
 
 
-# --- size of solution --- #
-n_values = np.full(10000, 5)
-
-# multiprocessing
-if __name__ == "__main__":
+def multiple_sets(n, N=10000):
+    n_values = np.full(N, n)
     pool = multiprocessing.Pool(4)
     start_time = time.perf_counter()
     result = pool.map(joint, n_values)
     finish_time = time.perf_counter()
     print(f"Program finished in {finish_time-start_time} seconds")
 
-    for z in np.unique(result, axis=0):
-        print(z)
+    zs_quiral = np.unique(np.sort(np.unique(result, axis=0), axis=-1), axis=0)
+    return zs_quiral
+
+
+n_var = 5
+
+final_zn = multiple_sets(n_var)
+final_zn = final_zn[~(np.isnan(final_zn).any(axis=1))]
+
+if n_var % 2 != 0 and n_var >= 5:
+    uq_abs, zs_uni_indx = np.unique(np.sort(np.abs(final_zn)),
+                                    return_index=True, axis=0)
+    final_zn = final_zn[zs_uni_indx].copy()
+
+for zz in final_zn:
+    print(zz, prueba_U1(zz))
+
+# print(final_zn)
+print(final_zn.shape)
