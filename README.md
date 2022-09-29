@@ -38,7 +38,7 @@ total free anomaly sets:  6
 ```
 
 Links:
-* [Test pip page](https://test.pypi.org/project/desoper/)
+* [Test pip page](https://test.pypi.org/project/U1-anomaly-free-sets/)
 * Flake8 Tool For Style Guide Enforcement
   * https://flake8.pycqa.org/ 
   * https://peps.python.org/pep-0008/
