@@ -21,10 +21,20 @@ array([ 21.,  -6., -22.,  12.,  -5.]), [7], [9, 6], 54
 ```
 
 Command line use
+
+1. Only one solution
 ```bash
 $ U1-anomaly-free-sets 5
 Input arguments: {'n': 5, 'ALL': False, 'N': None, 'zmax': None, 'imax': None, 'outfile_name': None}
 (array([ 21.,  -6., -22.,  12.,  -5.]), [7], [9, 6], 54)
+```
+2. All possible solutions according to sample size. This last method exports
+a json file with all quiral sets and their l, k, gcd.
+```bash
+$ U1-anomaly-free-sets 5 -a --N=20 --zmax=30 --m_max=10 --outfile_name=ttk
+Input arguments: {'n': 5, 'ALL': True, 'N': 20, 'zmax': 30, 'm_max': 10, 'outfile_name': 'ttk'}
+Program finished in 0.009126128999923822 seconds
+total free anomaly sets:  6
 ```
 
 Links:
