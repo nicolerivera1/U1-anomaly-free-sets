@@ -37,7 +37,7 @@ def main():
         name="U1-anomaly-free-sets",
 
         # Version number:
-        version="0.0.1",
+        version="0.0.2",
 
         # Application author details:
         author="nicolerivera1",
@@ -51,6 +51,7 @@ def main():
 
         # Details
         url="https://github.com/nicolerivera1/U1-anomaly-free-sets",
+        scripts=['bin/U1-anomaly-free-sets'],
 
         license="MIT",
 
