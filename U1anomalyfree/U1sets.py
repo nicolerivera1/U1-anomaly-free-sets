@@ -122,7 +122,7 @@ def joint(n0, zmax=30, m_max=10):
 
 def multiple_sets(n, N=10100, Z_max=30, M_max=10):
     n_values = np.full(N, n)
-    pool = multiprocessing.Pool(4)
+    pool = multiprocessing.Pool(3)
     start_time = time.perf_counter()
     joint_fun = partial(joint, zmax=Z_max, m_max=M_max)
     result = pool.map(joint_fun, n_values)
@@ -164,6 +164,3 @@ def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, fpref="U1sets"):
 
     print("total free anomaly sets: ", final_zn.shape[0])
     return final_zn.shape[0]
-
-
-find_all_sets(5)
