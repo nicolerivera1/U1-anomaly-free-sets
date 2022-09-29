@@ -121,6 +121,10 @@ def joint(n0, zmax=30, m_max=10):
 
 
 def multiple_sets(n, N=10100, Z_max=30, M_max=10):
+    """
+    calculate multiple sets using multiprocessing
+    """
+    # performs multiprocessing
     n_values = np.full(N, n)
     pool = multiprocessing.Pool(3)
     start_time = time.perf_counter()
@@ -129,6 +133,7 @@ def multiple_sets(n, N=10100, Z_max=30, M_max=10):
     finish_time = time.perf_counter()
     print(f"Program finished in {finish_time-start_time} seconds")
 
+    # selects unique solutions and its corresponding l, k, gcd
     zs, z_inf = [], []
     for i in range(0, N):
         zs.append(result[i][0].tolist())
@@ -138,12 +143,19 @@ def multiple_sets(n, N=10100, Z_max=30, M_max=10):
     zs_uniq_quir, ind_zs = np.unique(np.sort(np.unique(zs, axis=0), axis=-1),
                                      axis=0, return_index=True)
     zs_inf = [z_inf[ind_zs[i]] for i in range(0, len(ind_zs))]
+
     return zs_uniq_quir, zs_inf
 
 
-def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, fpref="U1sets"):
+def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, i_max=0, fpref="U1sets"):
+    """
+    Find all possible solutions according to args passed and limited by
+    maximun runs N
 
+    """
+    # find all possible sets and filter them as unique
     final_zn, final_inf = multiple_sets(n_var, N, Z_Max, M_Max)
+
     final_zn = final_zn[~(np.isnan(final_zn).any(axis=1))]
     final_inf = final_inf[0:len(final_zn)]
 
@@ -154,6 +166,7 @@ def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, fpref="U1sets"):
         final_inf = [final_inf[zs_uni_indx[i]]
                      for i in range(0, len(zs_uni_indx))]
 
+    # open file according to filename
     fname = fpref + str(n_var) + '.txt'
     file = open(fname, 'w')
 
@@ -164,3 +177,6 @@ def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, fpref="U1sets"):
 
     print("total free anomaly sets: ", final_zn.shape[0])
     return final_zn.shape[0]
+
+
+find_all_sets(6)
