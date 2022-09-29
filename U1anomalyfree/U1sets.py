@@ -147,7 +147,7 @@ def multiple_sets(n, N=10100, Z_max=30, M_max=10):
     return zs_uniq_quir, zs_inf
 
 
-def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, i_max=0, fpref="U1sets"):
+def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, i_max=0, outfile_name="U1sets"):
     """
     Find all possible solutions according to args passed and limited by
     maximun runs N
@@ -167,7 +167,7 @@ def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, i_max=0, fpref="U1sets"):
                      for i in range(0, len(zs_uni_indx))]
 
     # open file according to filename
-    fname = fpref + str(n_var) + '.txt'
+    fname = outfile_name + str(n_var) + '.txt'
     file = open(fname, 'w')
 
     # writting in file

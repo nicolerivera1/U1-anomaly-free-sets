@@ -4,42 +4,72 @@ from U1anomalyfree import U1sets
 import argparse
 
 # Create the parser
-parser = argparse.ArgumentParser(description="Anomaly free solutions to the U1 symmetry group")
+parser = argparse.ArgumentParser(
+    description="Anomaly free solutions to the U1 symmetry group"
+)
 
 # add n argument
-parser.add_argument('n', type=int, help="Number of anomaly free set elements")
+parser.add_argument("n", type=int, help="Number of anomaly free set elements")
 
 # add type of calculation
-parser.add_argument('-a', '--ALL', action='store_true',
-                    help="User option to calculate all posible sets of given n shape")
+parser.add_argument(
+    "-a",
+    "--ALL",
+    required=False,
+    action="store_true",
+    help="User option to calculate all posible sets of given n shape",
+)
 
 # add N argument
-parser.add_argument('-N', type=int,
-                    help="Number of sucesive calculations to find all posible solutions")
+parser.add_argument(
+    "--N",
+    type=int,
+    required=False,
+    action="store",
+    help="Number of sucesive calculations to find all posible solutions",
+)
 
 # add zmax argument
-parser.add_argument('-zmax', type=int,
-                    help="Maximum absolute value for a anomaly set element")
+parser.add_argument(
+    "--zmax",
+    type=int,
+    required=False,
+    action="store",
+    help="Maximum absolute value for an anomaly set element",
+)
 
 # add imax argument
-parser.add_argument('-imax', type=int,
-                    help="Number of total runs of size N to find all posible solutions")
+parser.add_argument(
+    "--imax",
+    type=int,
+    required=False,
+    action="store",
+    help="Number of total runs of size N to find all posible solutions",
+)
 
 # file optional name
-parser.add_argument('file', nargs='?', default='', help='Optional output filename')
+parser.add_argument(
+    "--outfile_name",
+    nargs="?",
+    type=str,
+    default=None,
+    help="Optional output filename for all posible solutions. If not specified, default filename is solutions",
+)
 
 # Parse the argument
 args = parser.parse_args()
 
 # Print arguments
-print('Input arguments')
-print('n:', args.n)
-print('a:', args.ALL)
-print('N:', args.N)
+print("Input arguments:", args.__dict__)
 
-if __name__ == '__main__':
+inp_arg = {k: v for k, v in args.__dict__.items() if v is not None}
+del inp_arg['ALL']
+del inp_arg['n']
+
+# implemented options
+if __name__ == "__main__":
 
     if args.ALL:
-        U1sets.find_all_sets(args.n)
+        U1sets.find_all_sets(args.n, **inp_arg)
     else:
         print(U1sets.joint(args.n))
