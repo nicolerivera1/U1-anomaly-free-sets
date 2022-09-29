@@ -8,6 +8,7 @@ U1 anomaly free sets module
 import numpy as np
 import multiprocessing
 import time
+from functools import partial
 
 # =========================================================
 # Funciones
@@ -119,11 +120,12 @@ def joint(n0, zmax=30, m_max=10):
                 break
 
 
-def multiple_sets(n, N=10100):
+def multiple_sets(n, N=10100, Z_max=30, M_max=10):
     n_values = np.full(N, n)
     pool = multiprocessing.Pool(4)
     start_time = time.perf_counter()
-    result = pool.map(joint, n_values)
+    joint_fun = partial(joint, zmax=Z_max, m_max=M_max)
+    result = pool.map(joint_fun, n_values)
     finish_time = time.perf_counter()
     print(f"Program finished in {finish_time-start_time} seconds")
 
@@ -139,19 +141,29 @@ def multiple_sets(n, N=10100):
     return zs_uniq_quir, zs_inf
 
 
-n_var = 6
+def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, fpref="U1sets"):
 
-final_zn, final_inf = multiple_sets(n_var)
-final_zn = final_zn[~(np.isnan(final_zn).any(axis=1))]
-final_inf = final_inf[0:len(final_zn)]
+    final_zn, final_inf = multiple_sets(n_var, N, Z_Max, M_Max)
+    final_zn = final_zn[~(np.isnan(final_zn).any(axis=1))]
+    final_inf = final_inf[0:len(final_zn)]
 
-if n_var % 2 != 0 and n_var >= 5:
-    uq_abs, zs_uni_indx = np.unique(np.sort(np.abs(final_zn)),
-                                    return_index=True, axis=0)
-    final_zn = final_zn[zs_uni_indx].copy()
-    final_inf = [final_inf[zs_uni_indx[i]] for i in range(0, len(zs_uni_indx))]
+    if n_var % 2 != 0 and n_var >= 5:
+        uq_abs, zs_uni_indx = np.unique(np.sort(np.abs(final_zn)),
+                                        return_index=True, axis=0)
+        final_zn = final_zn[zs_uni_indx].copy()
+        final_inf = [final_inf[zs_uni_indx[i]]
+                     for i in range(0, len(zs_uni_indx))]
 
-for k in range(0, len(final_zn)):
-    print(final_zn[k], final_inf[k])
+    fname = fpref + str(n_var) + '.txt'
+    file = open(fname, 'w')
 
-print("total free anomaly sets: ", final_zn.shape[0])
+    # writting in file
+    for k in range(0, len(final_zn)):
+        file.write(str(final_zn[k]) + str(final_inf[k]) + "\n")
+    file.close()
+
+    print("total free anomaly sets: ", final_zn.shape[0])
+    return final_zn.shape[0]
+
+
+find_all_sets(5)
