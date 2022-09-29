@@ -177,6 +177,3 @@ def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, i_max=0, fpref="U1sets"):
 
     print("total free anomaly sets: ", final_zn.shape[0])
     return final_zn.shape[0]
-
-
-find_all_sets(6)
