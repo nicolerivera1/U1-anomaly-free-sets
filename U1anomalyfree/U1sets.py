@@ -22,13 +22,13 @@ def merge_op(x, y):
     return np.sum(x * (y**2)) * x - np.sum((x**2) * y) * y
 
 
-def even(n):
+def even(n, m_max=10):
     """even sized U1 solution calculator"""
 
     m = int(n / 2 - 1)  # k, l size
 
-    k = np.random.randint(1, 10, size=m)
-    l = np.random.randint(1, 10, size=m)
+    k = np.random.randint(1, m_max, size=m)
+    l = np.random.randint(1, m_max, size=m)
 
     # generate plus and minus vector
     vp = np.concatenate(([l[0]], k, [-l[0]], -k))
@@ -37,16 +37,16 @@ def even(n):
     # calculate z
     z = merge_op(vp, vm)
 
-    return z
+    return z, l, k
 
 
-def odd(n):
+def odd(n, m_max=10):
     """odd sized U1 solution calculator"""
 
     m = int((n - 3) / 2)  # k, l size
 
-    k = np.random.randint(1, 10, size=m + 1)
-    l = np.random.randint(1, 10, size=m)
+    k = np.random.randint(1, m_max, size=m + 1)
+    l = np.random.randint(1, m_max, size=m)
 
     # generate plus and minus vector
     up = np.concatenate(([0], k, -k))
@@ -55,7 +55,7 @@ def odd(n):
     # calculate z
     z = merge_op(up, um)
 
-    return z
+    return z, l, k
 
 
 def no_vectorlike(z):
@@ -85,7 +85,7 @@ def prueba_U1(q):
 # Funcion principal
 
 
-def joint(n0):
+def joint(n0, zmax=30, m_max=10):
     """main function to calculate quiral U1 solutions"""
 
     rs = 0  # aceptance variable - 0 is no-quiral, 1 is quiral
@@ -94,9 +94,9 @@ def joint(n0):
 
         # gets z according to case
         if n0 % 2 == 0 and n0 > 2:
-            zf = even(n0)
+            zf, li, ki = even(n0, m_max)
         elif n0 % 2 != 0 and n0 >= 5:
-            zf = odd(n0)
+            zf, li, ki = odd(n0, m_max)
         else:
             print("ingrese entero positivo válido")
             rs = 2
@@ -109,17 +109,17 @@ def joint(n0):
         # evaluates other conditions over z
         if rs == 1:
             zn = zf / div  # reduced z by its gcd
-            if np.any(np.abs(zn) > 30) or np.any(np.abs(zn) == 0):
+            if np.any(np.abs(zn) > zmax) or np.any(np.abs(zn) == 0):
                 # all elements must be non zero and minor than 30
                 rs = 0
                 continue
             else:
-                # return (zn, div) #use this if you also need gcd information
-                return zn  # use this if you only need z
+                # return zn, l, k and gcd
+                return (zn, li.tolist(), ki.tolist(), div)
                 break
 
 
-def multiple_sets(n, N=10000):
+def multiple_sets(n, N=10100):
     n_values = np.full(N, n)
     pool = multiprocessing.Pool(4)
     start_time = time.perf_counter()
@@ -127,22 +127,31 @@ def multiple_sets(n, N=10000):
     finish_time = time.perf_counter()
     print(f"Program finished in {finish_time-start_time} seconds")
 
-    zs_quiral = np.unique(np.sort(np.unique(result, axis=0), axis=-1), axis=0)
-    return zs_quiral
+    zs, z_inf = [], []
+    for i in range(0, N):
+        zs.append(result[i][0].tolist())
+        z_inf.append(result[i][1:4])
+
+    zs = np.array(zs)
+    zs_uniq_quir, ind_zs = np.unique(np.sort(np.unique(zs, axis=0), axis=-1),
+                                     axis=0, return_index=True)
+    zs_inf = [z_inf[ind_zs[i]] for i in range(0, len(ind_zs))]
+    return zs_uniq_quir, zs_inf
 
 
-n_var = 5
+n_var = 6
 
-final_zn = multiple_sets(n_var)
+final_zn, final_inf = multiple_sets(n_var)
 final_zn = final_zn[~(np.isnan(final_zn).any(axis=1))]
+final_inf = final_inf[0:len(final_zn)]
 
 if n_var % 2 != 0 and n_var >= 5:
     uq_abs, zs_uni_indx = np.unique(np.sort(np.abs(final_zn)),
                                     return_index=True, axis=0)
     final_zn = final_zn[zs_uni_indx].copy()
+    final_inf = [final_inf[zs_uni_indx[i]] for i in range(0, len(zs_uni_indx))]
 
-for zz in final_zn:
-    print(zz, prueba_U1(zz))
+for k in range(0, len(final_zn)):
+    print(final_zn[k], final_inf[k])
 
-# print(final_zn)
-print(final_zn.shape)
+print("total free anomaly sets: ", final_zn.shape[0])
