@@ -26,7 +26,7 @@ parser.add_argument(
     type=int,
     required=False,
     action="store",
-    help="Number of sucesive calculations to find all posible solutions",
+    help="Number of sucesive calculations to find all posible solutions. default=10100",
 )
 
 # add zmax argument
@@ -35,16 +35,16 @@ parser.add_argument(
     type=int,
     required=False,
     action="store",
-    help="Maximum absolute value for an anomaly set element",
+    help="Maximum absolute value for an anomaly set element. default=30",
 )
 
 # add imax argument
 parser.add_argument(
-    "--imax",
+    "--m_max",
     type=int,
     required=False,
     action="store",
-    help="Number of total runs of size N to find all posible solutions",
+    help="Maximum value of l, k generators. default=10",
 )
 
 # file optional name
@@ -53,7 +53,7 @@ parser.add_argument(
     nargs="?",
     type=str,
     default=None,
-    help="Optional output filename for all posible solutions. If not specified, default filename is solutions",
+    help="Optional output filename for all posible solutions. default=U1sets",
 )
 
 # Parse the argument

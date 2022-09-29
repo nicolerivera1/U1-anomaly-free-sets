@@ -9,6 +9,7 @@ import numpy as np
 import multiprocessing
 import time
 from functools import partial
+import pandas as pd
 
 # =========================================================
 # Funciones
@@ -140,40 +141,48 @@ def multiple_sets(n, N=10100, Z_max=30, M_max=10):
         z_inf.append(result[i][1:4])
 
     zs = np.array(zs)
-    zs_uniq_quir, ind_zs = np.unique(np.sort(np.unique(zs, axis=0), axis=-1),
-                                     axis=0, return_index=True)
+    zs_uniq_quir, ind_zs = np.unique(
+        np.sort(np.unique(zs, axis=0), axis=-1), axis=0, return_index=True
+    )
     zs_inf = [z_inf[ind_zs[i]] for i in range(0, len(ind_zs))]
 
     return zs_uniq_quir, zs_inf
 
 
-def find_all_sets(n_var, N=10100, Z_Max=30, M_Max=10, i_max=0, outfile_name="U1sets"):
+def find_all_sets(
+    n_var,
+    N=10100,
+    zmax=30,
+    m_max=10,
+    i_max=0,
+    outfile_name="U1sets"
+):
+
     """
     Find all possible solutions according to args passed and limited by
     maximun runs N
 
     """
     # find all possible sets and filter them as unique
-    final_zn, final_inf = multiple_sets(n_var, N, Z_Max, M_Max)
+    final_zn, final_inf = multiple_sets(n_var, N, zmax, m_max)
 
     final_zn = final_zn[~(np.isnan(final_zn).any(axis=1))]
-    final_inf = final_inf[0:len(final_zn)]
+    final_inf = final_inf[0: len(final_zn)]
 
     if n_var % 2 != 0 and n_var >= 5:
-        uq_abs, zs_uni_indx = np.unique(np.sort(np.abs(final_zn)),
-                                        return_index=True, axis=0)
+        uq_abs, zs_uni_indx = np.unique(
+            np.sort(np.abs(final_zn)), return_index=True, axis=0
+        )
         final_zn = final_zn[zs_uni_indx].copy()
-        final_inf = [final_inf[zs_uni_indx[i]]
-                     for i in range(0, len(zs_uni_indx))]
+        final_inf = [final_inf[zs_uni_indx[i]] for i in range(0, len(zs_uni_indx))]
 
-    # open file according to filename
-    fname = outfile_name + str(n_var) + '.txt'
-    file = open(fname, 'w')
+    # create pandas dataframe
+    df = pd.DataFrame(final_inf, columns=["l", "k", "gcd"])
+    df["quiral_set"] = final_zn.tolist()
 
-    # writting in file
-    for k in range(0, len(final_zn)):
-        file.write(str(final_zn[k]) + str(final_inf[k]) + "\n")
-    file.close()
+    # save solutions to json file
+    fname = outfile_name + str(n_var) + str(".json")
+    df.to_json(fname, orient="records")
 
     print("total free anomaly sets: ", final_zn.shape[0])
     return final_zn.shape[0]
